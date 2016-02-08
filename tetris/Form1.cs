@@ -39,21 +39,21 @@ namespace WindowsFormsApplication1
                     if (canLeft(fallFigur))
                     {
                         fallFigur.leftPoint = new Point(fallFigur.leftPoint.X - width, fallFigur.leftPoint.Y);
-                        panel1.Invalidate();
+                        pictureBox1.Invalidate();
                     }
                     break;
                 case KeyPressed.D:
                     if (canRight(fallFigur))
                     {
                         fallFigur.leftPoint = new Point(fallFigur.leftPoint.X + width, fallFigur.leftPoint.Y);
-                        panel1.Invalidate();
+                        pictureBox1.Invalidate();
                     }
                     break;
             }
 
             if (canFall(fallFigur))
             {
-                //fallFigur.clearFigure(panel1.CreateGraphics());
+                //fallFigur.clearFigure(pictureBox1.CreateGraphics());
                 fallFigur.stepFigure();
                 
             }
@@ -68,7 +68,7 @@ namespace WindowsFormsApplication1
                 fallFigur = new Figur(Color.Yellow);
                 
             }
-            panel1.Invalidate();
+            pictureBox1.Invalidate();
         }
 
 
@@ -97,12 +97,12 @@ namespace WindowsFormsApplication1
             }
         }
 
-        private bool canFall(Figur fg)
-        {
+            private bool canFall(Figur fg)
+            {
             bool result = true;
             Rectangle rect1 = new Rectangle(fg.BottomPoint, new Size(width, width));
-            Rectangle rect2 = new Rectangle(panel1.Location.X - 1, panel1.Location.Y,
-                            panel1.ClientSize.Width + 1, panel1.ClientSize.Height - 2 * width);
+            Rectangle rect2 = new Rectangle(pictureBox1.Location.X - 1, pictureBox1.Location.Y,
+                            pictureBox1.ClientSize.Width + 1, pictureBox1.ClientSize.Height - 2 * width);
             result = rect1.IntersectsWith(rect2);
             foreach (Point point in liyPoints)
             {
@@ -117,12 +117,7 @@ namespace WindowsFormsApplication1
         }
         private bool canLeft(Figur fg)
         {
-            bool result = true;
-            Point pn = new Point(fg.LeftPoint.X - width, fg.LeftPoint.Y);
-            Rectangle rect1 = new Rectangle(pn, new Size(width, width));
-            Rectangle rect2 = new Rectangle(panel1.Location.X + width -1, panel1.Location.Y,
-                            panel1.ClientSize.Width - 2 * width - 1, panel1.ClientSize.Height);
-            result = rect1.IntersectsWith(rect2);
+            bool result = fg.LeftPoint.X - width >= 0;
             foreach (Point point in liyPoints)
             {
                 foreach (Point point2 in fg.FillPoints)
@@ -135,12 +130,7 @@ namespace WindowsFormsApplication1
         }
         private bool canRight(Figur fg)
         {
-            bool result = true;
-            Point pn = new Point(fg.LeftPoint.X + width, fg.LeftPoint.Y);
-            Rectangle rect1 = new Rectangle(fg.RightPoint, new Size(width, width));
-            Rectangle rect2 = new Rectangle(panel1.Location.X + width, panel1.Location.Y,
-                            panel1.ClientSize.Width - 2 * width - 1, panel1.ClientSize.Height);
-            result = rect1.IntersectsWith(rect2);
+            bool result = fg.RightPoint.X + width < pictureBox1.Width - 1;
             foreach (Point point in liyPoints)
             {
                 foreach (Point point2 in fg.FillPoints)
@@ -167,19 +157,29 @@ namespace WindowsFormsApplication1
                     for (int j = 0; j < tetr.GetLength(0); j++)
                     {
                         tetr[j, i] = false;
-                        liyPoints.Remove(new Point(j * width,i * width));
                         for (int k = i; k > 0; k--)
                         {
                             tetr[j, k] = tetr[j, k - 1];
                         }
                     }
-
-                    
+                    liyPoints.Clear();
+                    for (int i1 = 0; i1 < tetr.GetLength(0); i1++)
+                    {
+                        for (int j = 0; j < tetr.GetLength(1); j++)
+                        {
+                            if (tetr[i1, j])
+                            {
+                                Point pt = new Point(i1 * 15, j * 15);
+                                liyPoints.Add(pt);
+                            }
+                        }
+                    }
                 }
-
             }
+
         }
-        private void panel1_Paint(object sender, PaintEventArgs e)
+
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             SolidBrush br = new SolidBrush(Color.Gainsboro);
 
@@ -198,18 +198,24 @@ namespace WindowsFormsApplication1
                 gr.FillRectangle(br, pt.X, pt.Y, width, width);
                 gr.DrawRectangle(pn, pt.X, pt.Y, width, width);
             }
+            // Отрисовка красных точек
             for (int i = 0; i < tetr.GetLength(0); i++)
             {
                 for (int j = 0; j < tetr.GetLength(1); j++)
                 {
                     if (tetr[i,j])
                     {
-                    SolidBrush Brush = new SolidBrush(Color.Red);
-                    gr.FillEllipse(Brush, new Rectangle(new Point(i * 15, j * 15),new Size(5,5)));
+                        //Point pt = new Point(i * 15, j * 15);
+                        //gr.FillRectangle(br, pt.X, pt.Y, width, width);
+                        //gr.DrawRectangle(pn, pt.X, pt.Y, width, width);
+                        SolidBrush Brush = new SolidBrush(Color.Red);
+                        gr.FillEllipse(Brush, new Rectangle(new Point(i * 15, j * 15), new Size(5, 5)));
                     }
                 }
             }
         }
+
+
 
 
     }
