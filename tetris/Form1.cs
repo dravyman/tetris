@@ -13,7 +13,8 @@ namespace WindowsFormsApplication1
     {
         int score = 0;
         int width = 15;
-        Figur fallFigur = new Figur(Color.Yellow);
+        int countOfFigures = 1;
+        Figur fallFigur = new Square(Color.Yellow);
         bool[,] tetr = new bool[14,20];
         List<Point> liyPoints = new List<Point>();
         public enum KeyPressed
@@ -46,11 +47,15 @@ namespace WindowsFormsApplication1
                     tetr[pn.X / width, pn.Y / width] = true;
                 }
                 checkLine();
-                fallFigur = new Figur(Color.Yellow);
-                
+                cehckFail();
+                fallFigur = randomFigure();
             }
             pictureBox1.Invalidate();
         }
+
+
+
+
         private void timer2_Tick(object sender, EventArgs e)
         {
             switch (lastKey)
@@ -58,14 +63,14 @@ namespace WindowsFormsApplication1
                 case KeyPressed.A:
                     if (canLeft(fallFigur))
                     {
-                        fallFigur.leftPoint = new Point(fallFigur.leftPoint.X - width, fallFigur.leftPoint.Y);
+                        fallFigur.LeftPoint = new Point(fallFigur.LeftPoint.X - width, fallFigur.LeftPoint.Y);
                         pictureBox1.Invalidate();
                     }
                     break;
                 case KeyPressed.D:
                     if (canRight(fallFigur))
                     {
-                        fallFigur.leftPoint = new Point(fallFigur.leftPoint.X + width, fallFigur.leftPoint.Y);
+                        fallFigur.LeftPoint = new Point(fallFigur.LeftPoint.X + width, fallFigur.LeftPoint.Y);
                         pictureBox1.Invalidate();
                     }
                     break;
@@ -81,7 +86,7 @@ namespace WindowsFormsApplication1
                         tetr[pn.X / width, pn.Y / width] = true;
                     }
                     checkLine();
-                    fallFigur = new Figur(Color.Yellow);
+                    fallFigur = new Square(Color.Yellow);
                     pictureBox1.Invalidate();
                     timer1.Enabled = timer2.Enabled = true;
                     lastKey = KeyPressed.None;
@@ -203,6 +208,26 @@ namespace WindowsFormsApplication1
             score += pow * pictureBox1.Width /(2 * width  )* 10 * pow;
             label1.Text = "Score: " + score;
 
+        }
+        private void cehckFail()
+        {
+            if (fallFigur.LeftPoint.Y < 5)
+                {
+                    pictureBox1.Invalidate();
+                    timer1.Enabled = timer2.Enabled = false;
+                    MessageBox.Show("Игра окончена\nВы набрали "+score+" очков");
+                }
+        }
+        private Figur randomFigure()
+        {
+            Random rnd = new Random();
+            switch (rnd.Next(0, countOfFigures))
+            { 
+                case 0:
+                    return new Square(Color.Red);
+                default:
+                    return new Square(Color.Red);
+            }
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)

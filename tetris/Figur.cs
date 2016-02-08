@@ -6,96 +6,41 @@ using System.Drawing;
 
 namespace WindowsFormsApplication1
 {
-    class Figur
+    abstract class Figur
     {
-        Color clr;
-        public Point leftPoint;
-        int width = 15;
+        public Point LeftPoint { get; set; }
+        public Point RightPoint { get; set; }
+        public Point BottomPoint { get; set; }
+        public List<Point> FillPoints{get;set;}
+        public int Width {get{return 15;}}
+        public Color clr;
+
         public Figur(Color clr)
         {
+            Random rnd = new Random();
             this.clr = clr;
-            leftPoint = new Point(30,0);
+            LeftPoint = new Point(rnd.Next(0,13) * 15,0);
             clr = Color.Yellow;
         }
-
-        public List<Point> FillPoints
-        {
-            get 
-            {
-                List<Point> result = new List<Point>();
-                result.Add(leftPoint);
-                result.Add(new Point(leftPoint.X, leftPoint.Y + width));
-                result.Add(new Point(leftPoint.X + width, leftPoint.Y + width));
-                result.Add(new Point(leftPoint.X + width, leftPoint.Y));
-                return result;
-            }
-            
-        }
-
-        public Point RightPoint
-        {
-            get
-            {
-                Point res = leftPoint;
-                foreach (Point pn in FillPoints)
-                {
-                    if (res.X < pn.X)
-                        res = pn;
-                }
-                return res;
-            }
-        }
-        public Point LeftPoint
-        {
-            get
-            {
-                Point res = leftPoint;
-                foreach (Point pn in FillPoints)
-                {
-                    if (res.X > pn.X)
-                        res = pn;
-                }
-                return res;
-            }
-        }
-        public Point BottomPoint
-        {
-            get
-            {
-                Point res = leftPoint;
-                foreach (Point pn in FillPoints)
-                {
-                    if (res.Y < pn.Y)
-                        res = pn;
-                }
-                return res;
-            }
-        }
-        public void paintFigure(Graphics gr)
+        public abstract void stepFigure();
+        public abstract void paintFigure(Graphics gr);
+        /*
+        public List<Point> FillPoints { get; }*/
+        /*public void paintFigure(Graphics gr)
         {
             SolidBrush br = new SolidBrush(Color.Yellow);
-            Pen pn = new Pen(Color.Black,1);
+            Pen pn = new Pen(Color.Black, 1);
             foreach (Point pt in this.FillPoints)
             {
-                gr.FillRectangle(br, pt.X, pt.Y, width, width);
-                gr.DrawRectangle(pn, pt.X, pt.Y, width, width);
+                gr.FillRectangle(br, pt.X, pt.Y, Width, Width);
+                gr.DrawRectangle(pn, pt.X, pt.Y, Width, Width);
             }
         }
-        public void clearFigure(Graphics gr)
-        {
-            SolidBrush br = new SolidBrush(Color.Transparent);
-            Pen pn = new Pen(Color.Transparent, 1);
-            foreach (Point pt in this.FillPoints)
-            {
-                gr.FillRectangle(br, pt.X, pt.Y, width, width);
-                gr.DrawRectangle(pn, pt.X, pt.Y, width, width);
-            }
-        }
-
         public void stepFigure()
         {
-            this.leftPoint = new Point(this.leftPoint.X, this.leftPoint.Y + width);
-        }
+
+            this.LeftPoint = new Point(this.LeftPoint.X, this.LeftPoint.Y + Width);
+        }*/
     }
 }
 
