@@ -11,13 +11,14 @@ namespace WindowsFormsApplication1
 {
     public partial class Form1 : Form
     {
+        int score = 0;
         int width = 15;
         Figur fallFigur = new Figur(Color.Yellow);
         bool[,] tetr = new bool[14,20];
         List<Point> liyPoints = new List<Point>();
         public enum KeyPressed
         {
-            None, A, D
+            None, A, D, S
         }
         private KeyPressed lastKey = KeyPressed.None;
         public Form1()
@@ -27,11 +28,30 @@ namespace WindowsFormsApplication1
 
         private void start_Click(object sender, EventArgs e)
         {
-            timer1.Enabled = !timer1.Enabled;
+            timer2.Enabled = timer1.Enabled = !timer1.Enabled;
             start.Text = timer1.Enabled.ToString();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (canFall(fallFigur))
+            {
+                fallFigur.stepFigure();
+            }
+            else 
+            {
+                liyPoints.AddRange(fallFigur.FillPoints);
+                foreach (Point pn in fallFigur.FillPoints)
+                {
+                    tetr[pn.X / width, pn.Y / width] = true;
+                }
+                checkLine();
+                fallFigur = new Figur(Color.Yellow);
+                
+            }
+            pictureBox1.Invalidate();
+        }
+        private void timer2_Tick(object sender, EventArgs e)
         {
             switch (lastKey)
             {
@@ -49,29 +69,25 @@ namespace WindowsFormsApplication1
                         pictureBox1.Invalidate();
                     }
                     break;
+                case KeyPressed.S:
+                    timer1.Enabled=timer2.Enabled=false;
+                    while (canFall(fallFigur))
+                    {
+                        fallFigur.stepFigure();
+                    }
+                    liyPoints.AddRange(fallFigur.FillPoints);
+                    foreach (Point pn in fallFigur.FillPoints)
+                    {
+                        tetr[pn.X / width, pn.Y / width] = true;
+                    }
+                    checkLine();
+                    fallFigur = new Figur(Color.Yellow);
+                    pictureBox1.Invalidate();
+                    timer1.Enabled = timer2.Enabled = true;
+                    lastKey = KeyPressed.None;
+                    break;
             }
-
-            if (canFall(fallFigur))
-            {
-                //fallFigur.clearFigure(pictureBox1.CreateGraphics());
-                fallFigur.stepFigure();
-                
-            }
-            else 
-            {
-                liyPoints.AddRange(fallFigur.FillPoints);
-                foreach (Point pn in fallFigur.FillPoints)
-                {
-                    tetr[pn.X / width, pn.Y / width] = true;
-                }
-                checkLine();
-                fallFigur = new Figur(Color.Yellow);
-                
-            }
-            pictureBox1.Invalidate();
         }
-
-
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
@@ -81,6 +97,9 @@ namespace WindowsFormsApplication1
                     break;
                 case Keys.D:
                     lastKey = KeyPressed.D;
+                    break;
+                case Keys.S:
+                    lastKey = KeyPressed.S;
                     break;
             }
         }
@@ -94,16 +113,15 @@ namespace WindowsFormsApplication1
                 case Keys.D:
                     lastKey = KeyPressed.None;
                     break;
+                case Keys.S:
+                    lastKey = KeyPressed.None;
+                    break;
             }
         }
 
-            private bool canFall(Figur fg)
+        private bool canFall(Figur fg)
             {
-            bool result = true;
-            Rectangle rect1 = new Rectangle(fg.BottomPoint, new Size(width, width));
-            Rectangle rect2 = new Rectangle(pictureBox1.Location.X - 1, pictureBox1.Location.Y,
-                            pictureBox1.ClientSize.Width + 1, pictureBox1.ClientSize.Height - 2 * width);
-            result = rect1.IntersectsWith(rect2);
+            bool result = fg.BottomPoint.Y + width < pictureBox1.Height - 1;
             foreach (Point point in liyPoints)
             {
                 foreach (Point point2 in fg.FillPoints)
@@ -145,15 +163,21 @@ namespace WindowsFormsApplication1
 
         private void checkLine()
         {
+            int pow = 0;
             for (int i = 0; i < tetr.GetLength(1); i++)
             {
                 bool lineAble = true;
                 for (int j = 0; j < tetr.GetLength(0); j++)
                 {
-                    lineAble = lineAble && tetr[j,i];
+                    if (!tetr[j, i])
+                    {
+                        lineAble = false;
+                        break;
+                    }
                 }
                 if (lineAble)
                 {
+                    pow++;
                     for (int j = 0; j < tetr.GetLength(0); j++)
                     {
                         tetr[j, i] = false;
@@ -176,15 +200,14 @@ namespace WindowsFormsApplication1
                     }
                 }
             }
+            score += pow * pictureBox1.Width /(2 * width  )* 10 * pow;
+            label1.Text = "Score: " + score;
 
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             SolidBrush br = new SolidBrush(Color.Gainsboro);
-
-            //fallFigur.clearFigure(e.Graphics);
-            //fallFigur.stepFigure();
             fallFigur.paintFigure(e.Graphics);
             paintLieFigure(e.Graphics);
         }
@@ -193,6 +216,7 @@ namespace WindowsFormsApplication1
         {
             SolidBrush br = new SolidBrush(Color.Yellow);
             Pen pn = new Pen(Color.Black, 1);
+            // Отрисовка лежащих фигур
             foreach (Point pt in liyPoints)
             {
                 gr.FillRectangle(br, pt.X, pt.Y, width, width);
@@ -205,18 +229,11 @@ namespace WindowsFormsApplication1
                 {
                     if (tetr[i,j])
                     {
-                        //Point pt = new Point(i * 15, j * 15);
-                        //gr.FillRectangle(br, pt.X, pt.Y, width, width);
-                        //gr.DrawRectangle(pn, pt.X, pt.Y, width, width);
                         SolidBrush Brush = new SolidBrush(Color.Red);
                         gr.FillEllipse(Brush, new Rectangle(new Point(i * 15, j * 15), new Size(5, 5)));
                     }
                 }
             }
         }
-
-
-
-
     }
 }
