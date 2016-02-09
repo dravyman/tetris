@@ -50,7 +50,7 @@
             this.start.TabIndex = 1;
             this.start.Text = "Go";
             this.start.UseVisualStyleBackColor = true;
-            this.start.Click += new System.EventHandler(this.start_Click);
+            this.start.MouseClick += new System.Windows.Forms.MouseEventHandler(this.start_MouseClick);
             // 
             // pictureBox1
             // 

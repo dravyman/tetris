@@ -6,12 +6,10 @@ using System.Drawing;
 
 namespace WindowsFormsApplication1
 {
-    class Square :Figur
+    class Square :Figure
     {
+        //Поля
         public override Point LeftPoint{get;set;}
-
-        public Square(Color clr) : base(clr) { }
-
         public override List<Point> FillPoints
         {
             get
@@ -25,48 +23,18 @@ namespace WindowsFormsApplication1
             }
 
         }
-
-        public override Point RightPoint
+        public override int State
         {
-            get
-            {
-                Point res = LeftPoint;
-                foreach (Point pn in FillPoints)
-                {
-                    if (res.X < pn.X)
-                        res = pn;
-                }
-                return res;
-            }
+            get;
+            set;
         }
-        
-        public override Point BottomPoint
+        //Конструктор
+        public Square(Color clr) : base(clr) { }
+        //Методы
+        public override void rotate()
         {
-            get
-            {
-                Point res = LeftPoint;
-                foreach (Point pn in FillPoints)
-                {
-                    if (res.Y < pn.Y)
-                        res = pn;
-                }
-                return res;
-            }
-        }
-
-        public override void paintFigure(Graphics gr)
-        {
-            SolidBrush br = new SolidBrush(this.clr);
-            Pen pn = new Pen(Color.Black, 1);
-            foreach (Point pt in this.FillPoints)
-            {
-                gr.FillRectangle(br, pt.X, pt.Y, Width, Width);
-                gr.DrawRectangle(pn, pt.X, pt.Y, Width, Width);
-            }
-        }
-        public override void stepFigure()
-        {
-            this.LeftPoint = new Point(this.LeftPoint.X, this.LeftPoint.Y + Width);
+            this.State = 0;
+            this.LeftPoint = this.LeftPoint;
         }
     }
 }

@@ -13,21 +13,20 @@ namespace WindowsFormsApplication1
     {
         int score = 0;
         int width = 15;
-        int countOfFigures = 1;
-        Figur fallFigur = new Square(Color.Yellow);
+        int countOfFigures = 2;
+        Figure fallFigur = new Square(Color.Yellow);
         bool[,] tetr = new bool[14,20];
         List<Point> liyPoints = new List<Point>();
         public enum KeyPressed
         {
-            None, A, D, S
+            None, A, D, S, Space
         }
         private KeyPressed lastKey = KeyPressed.None;
         public Form1()
         {
             InitializeComponent();
         }
-
-        private void start_Click(object sender, EventArgs e)
+        private void start_MouseClick(object sender, MouseEventArgs e)
         {
             timer2.Enabled = timer1.Enabled = !timer1.Enabled;
             start.Text = timer1.Enabled.ToString();
@@ -60,6 +59,9 @@ namespace WindowsFormsApplication1
         {
             switch (lastKey)
             {
+                /*case KeyPressed.Space:
+                    fallFigur.rotate();
+                    break;*/
                 case KeyPressed.A:
                     if (canLeft(fallFigur))
                     {
@@ -86,7 +88,8 @@ namespace WindowsFormsApplication1
                         tetr[pn.X / width, pn.Y / width] = true;
                     }
                     checkLine();
-                    fallFigur = new Square(Color.Yellow);
+                    cehckFail();
+                    fallFigur = randomFigure();
                     pictureBox1.Invalidate();
                     timer1.Enabled = timer2.Enabled = true;
                     lastKey = KeyPressed.None;
@@ -106,6 +109,19 @@ namespace WindowsFormsApplication1
                 case Keys.S:
                     lastKey = KeyPressed.S;
                     break;
+                case Keys.Space:
+                    lastKey = KeyPressed.Space;
+                    fallFigur.rotate();
+                    int countStep = 0;
+                    while (!canRight(fallFigur))
+                    {
+                        countStep++;
+                        fallFigur.LeftPoint = new Point(fallFigur.LeftPoint.X - width,fallFigur.LeftPoint.Y);
+                    }
+                    if (countStep > 0)
+                        fallFigur.LeftPoint = new Point(fallFigur.LeftPoint.X + width, fallFigur.LeftPoint.Y);
+                    pictureBox1.Invalidate();
+                    break;
             }
         }
         private void Form1_KeyUp(object sender, KeyEventArgs e)
@@ -121,10 +137,13 @@ namespace WindowsFormsApplication1
                 case Keys.S:
                     lastKey = KeyPressed.None;
                     break;
+                case Keys.Space:
+                    lastKey = KeyPressed.None;
+                    break;
             }
         }
 
-        private bool canFall(Figur fg)
+        private bool canFall(Figure fg)
             {
             bool result = fg.BottomPoint.Y + width < pictureBox1.Height - 1;
             foreach (Point point in liyPoints)
@@ -138,7 +157,7 @@ namespace WindowsFormsApplication1
             return result;
 
         }
-        private bool canLeft(Figur fg)
+        private bool canLeft(Figure fg)
         {
             bool result = fg.LeftPoint.X - width >= 0;
             foreach (Point point in liyPoints)
@@ -151,7 +170,7 @@ namespace WindowsFormsApplication1
             }
             return result;
         }
-        private bool canRight(Figur fg)
+        private bool canRight(Figure fg)
         {
             bool result = fg.RightPoint.X + width < pictureBox1.Width - 1;
             foreach (Point point in liyPoints)
@@ -218,13 +237,15 @@ namespace WindowsFormsApplication1
                     MessageBox.Show("Игра окончена\nВы набрали "+score+" очков");
                 }
         }
-        private Figur randomFigure()
+        private Figure randomFigure()
         {
             Random rnd = new Random();
             switch (rnd.Next(0, countOfFigures))
             { 
                 case 0:
                     return new Square(Color.Red);
+                case 1:
+                    return new Line(Color.Green);
                 default:
                     return new Square(Color.Red);
             }
@@ -236,7 +257,6 @@ namespace WindowsFormsApplication1
             fallFigur.paintFigure(e.Graphics);
             paintLieFigure(e.Graphics);
         }
-
         private void paintLieFigure(Graphics gr)
         {
             SolidBrush br = new SolidBrush(Color.Yellow);
@@ -260,5 +280,6 @@ namespace WindowsFormsApplication1
                 }
             }
         }
+
     }
 }
