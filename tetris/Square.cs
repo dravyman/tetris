@@ -8,15 +8,11 @@ namespace WindowsFormsApplication1
 {
     class Square :Figur
     {
-        public Square(Color clr) :base(clr)
-        {
-            Random rnd = new Random();
-            this.clr = clr;
-            LeftPoint = new Point(rnd.Next(0, 13) * 15, 0);
-            clr = Color.Yellow;
-        }
+        public override Point LeftPoint{get;set;}
 
-        public List<Point> FillPoints
+        public Square(Color clr) : base(clr) { }
+
+        public override List<Point> FillPoints
         {
             get
             {
@@ -27,11 +23,10 @@ namespace WindowsFormsApplication1
                 result.Add(new Point(LeftPoint.X + Width, LeftPoint.Y));
                 return result;
             }
-            set { }
 
         }
 
-        public Point RightPoint
+        public override Point RightPoint
         {
             get
             {
@@ -43,10 +38,9 @@ namespace WindowsFormsApplication1
                 }
                 return res;
             }
-            set { }
         }
         
-        public Point BottomPoint
+        public override Point BottomPoint
         {
             get
             {

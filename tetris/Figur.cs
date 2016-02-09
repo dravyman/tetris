@@ -8,10 +8,10 @@ namespace WindowsFormsApplication1
 {
     abstract class Figur
     {
-        public Point LeftPoint { get; set; }
-        public Point RightPoint { get; set; }
-        public Point BottomPoint { get; set; }
-        public List<Point> FillPoints{get;set;}
+        public abstract Point LeftPoint { get; set; }
+        public abstract Point RightPoint { get; }
+        public abstract Point BottomPoint { get; }
+        public abstract List<Point> FillPoints{get;}
         public int Width {get{return 15;}}
         public Color clr;
 
@@ -24,23 +24,7 @@ namespace WindowsFormsApplication1
         }
         public abstract void stepFigure();
         public abstract void paintFigure(Graphics gr);
-        /*
-        public List<Point> FillPoints { get; }*/
-        /*public void paintFigure(Graphics gr)
-        {
-            SolidBrush br = new SolidBrush(Color.Yellow);
-            Pen pn = new Pen(Color.Black, 1);
-            foreach (Point pt in this.FillPoints)
-            {
-                gr.FillRectangle(br, pt.X, pt.Y, Width, Width);
-                gr.DrawRectangle(pn, pt.X, pt.Y, Width, Width);
-            }
-        }
-        public void stepFigure()
-        {
 
-            this.LeftPoint = new Point(this.LeftPoint.X, this.LeftPoint.Y + Width);
-        }*/
     }
 }
 
