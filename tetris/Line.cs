@@ -9,7 +9,6 @@ namespace WindowsFormsApplication1
     class Line : Figure
     {
         //Поля
-        public override Point LeftPoint { get; set; }
         public override List<Point> FillPoints
         {
             get
@@ -32,29 +31,33 @@ namespace WindowsFormsApplication1
                 }
                 return result;
             }
-
         }
-        public override int State
+        public override int countOfState
         {
-            get;
-            set;
+            get { return 2; }
         }
         //Конструктор
-        public Line(Color clr) : base(clr) { }
+        public Line(Color clr) 
+        : base(clr) 
+        {
+            Random rnd = new Random();
+            int lol = rnd.Next(0,this.countOfState);
+            this.State = lol;
+            switch (this.State)
+            { 
+                case 0:
+                    this.LeftPoint = new Point(rnd.Next(0, 14) * 15, 0);
+                    break;
+                case 1:
+                    this.LeftPoint = new Point(rnd.Next(0,11)*15,0);
+                    break;
+            }
+        }
         //Методы
         public override void rotate()
         {
-            this.State = (this.State + 1) % 2;
-            /*switch (this.State)
-            { 
-                case 0:
-
-                    break;
-                case 1:
-
-                    break;
-            }*/
+            this.State = (this.State + 1) % this.countOfState;
+            this.LeftPoint = this.LeftPoint;
         }
-
     }
 }

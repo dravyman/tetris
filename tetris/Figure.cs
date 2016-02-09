@@ -9,7 +9,8 @@ namespace WindowsFormsApplication1
     abstract class Figure
     {
         //Поля
-        public abstract Point LeftPoint { get; set; }
+        public Point LeftPoint { get; set; }
+        public abstract int countOfState { get; }
         public Point RightPoint
         {
             get
@@ -37,15 +38,13 @@ namespace WindowsFormsApplication1
             }
         }
         public abstract List<Point> FillPoints{get;}
-        public abstract int State { get; set; }
+        public int State { get; set; }
         public int Width {get{return 15;}}
         public Color clr;
         //Конструктор
         public Figure(Color clr)
         {
-            Random rnd = new Random();
             this.clr = clr;
-            LeftPoint = new Point(rnd.Next(0,13) * 15,0);
             clr = Color.Yellow;
         }
         //Методы
@@ -62,6 +61,8 @@ namespace WindowsFormsApplication1
                 gr.FillRectangle(br, pt.X, pt.Y, Width, Width);
                 gr.DrawRectangle(pn, pt.X, pt.Y, Width, Width);
             }
+            SolidBrush Brush = new SolidBrush(Color.Gold);
+            gr.FillEllipse(Brush, new Rectangle(LeftPoint, new Size(5, 5)));
         }
         public abstract void rotate();
     }

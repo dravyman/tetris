@@ -9,7 +9,6 @@ namespace WindowsFormsApplication1
     class Square :Figure
     {
         //Поля
-        public override Point LeftPoint{get;set;}
         public override List<Point> FillPoints
         {
             get
@@ -23,17 +22,21 @@ namespace WindowsFormsApplication1
             }
 
         }
-        public override int State
+        public override int countOfState
         {
-            get;
-            set;
+            get { return 1; }
         }
         //Конструктор
-        public Square(Color clr) : base(clr) { }
+        public Square(Color clr)
+            : base(clr)
+        {
+            Random rnd = new Random();
+            LeftPoint = new Point(rnd.Next(0, 13) * 15, 0);
+        }
         //Методы
         public override void rotate()
         {
-            this.State = 0;
+            this.State = (this.State + 1) % this.countOfState;
             this.LeftPoint = this.LeftPoint;
         }
     }

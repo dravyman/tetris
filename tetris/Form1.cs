@@ -13,7 +13,7 @@ namespace WindowsFormsApplication1
     {
         int score = 0;
         int width = 15;
-        int countOfFigures = 2;
+        int countOfFigures = 4;
         Figure fallFigur = new Square(Color.Yellow);
         bool[,] tetr = new bool[14,20];
         List<Point> liyPoints = new List<Point>();
@@ -120,6 +120,14 @@ namespace WindowsFormsApplication1
                     }
                     if (countStep > 0)
                         fallFigur.LeftPoint = new Point(fallFigur.LeftPoint.X + width, fallFigur.LeftPoint.Y);
+                    countStep = 0;
+                    while (!canLeft(fallFigur))
+                    {
+                        countStep++;
+                        fallFigur.LeftPoint = new Point(fallFigur.LeftPoint.X + width,fallFigur.LeftPoint.Y);
+                    }
+                    if (countStep > 0)
+                        fallFigur.LeftPoint = new Point(fallFigur.LeftPoint.X - width, fallFigur.LeftPoint.Y);
                     pictureBox1.Invalidate();
                     break;
             }
@@ -240,14 +248,19 @@ namespace WindowsFormsApplication1
         private Figure randomFigure()
         {
             Random rnd = new Random();
-            switch (rnd.Next(0, countOfFigures))
+            int lol = rnd.Next(0, countOfFigures);
+            switch (lol)
             { 
                 case 0:
                     return new Square(Color.Red);
                 case 1:
                     return new Line(Color.Green);
+                case 2:
+                    return new G(Color.Blue);
+                case 3:
+                    return new UnG(Color.Orange);
                 default:
-                    return new Square(Color.Red);
+                    return new Line(Color.Black);
             }
         }
 
